@@ -1,8 +1,9 @@
-export default function App() {
+function App() {
   return (
     <div>
-      <h1>Sleek Sands</h1>
-      <p>Frontend connected.</p>
+      Frontend working
     </div>
   );
 }
+
+export default App;
