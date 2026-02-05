@@ -4,7 +4,7 @@ function App() {
   const [status, setStatus] = useState("checking...");
 
   useEffect(() => {
-    fetch("https://sleek-sands-api-1.onrender.com/health")
+    fetch("1https://sleek-sands-backend.onrender.com")
       .then(res => res.json())
       .then(data => setStatus(data.status))
       .catch(() => setStatus("offline"));
