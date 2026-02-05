@@ -1,3 +1,11 @@
+API is working.
+Use this exact endpoint in the frontend:
+Copy code
+
+https://sleek-sands-api-1.onrender.com/health
+Update src/App.jsx:
+Copy code
+Js
 import { useEffect, useState } from "react";
 
 export default function App() {
@@ -18,3 +26,11 @@ export default function App() {
     </div>
   );
 }
+Commit → push → wait for Render to redeploy → refresh the frontend page.
+Expected result on the live site:
+Copy code
+
+Backend status: ok
+At that point: frontend build ✔
+API live ✔
+connection verified ✔
