@@ -6,7 +6,7 @@ function App() {
   useEffect(() => {
     fetch("1https://sleek-sands-backend.onrender.com")
       .then(res => res.json())
-      .then(data => setStatus(data.status))
+      .then(data =>  console.log(data.))
       .catch(() => setStatus("offline"));
   }, []);
 
