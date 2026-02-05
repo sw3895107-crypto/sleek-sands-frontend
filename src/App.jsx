@@ -6,10 +6,7 @@ function App() {
   useEffect(() => {
     fetch("https://sleek-sands-backend.onrender.com/health")
       .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        setStatus(data.status || "online");
-      })
+      .then(data => setStatus(data.status))
       .catch(() => setStatus("offline"));
   }, []);
 
