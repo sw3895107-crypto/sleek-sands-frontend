@@ -4,9 +4,12 @@ function App() {
   const [status, setStatus] = useState("checking...");
 
   useEffect(() => {
-    fetch("1https://sleek-sands-backend.onrender.com")
+    fetch("https://sleek-sands-backend.onrender.com/health")
       .then(res => res.json())
-      .then(data =>  console.log(data.))
+      .then(data => {
+        console.log(data);
+        setStatus(data.status || "online");
+      })
       .catch(() => setStatus("offline"));
   }, []);
 
