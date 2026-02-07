@@ -2,46 +2,66 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: #87ceeb;
-  font-family: "Trebuchet MS", sans-serif;
+  font-family: system-ui, sans-serif;
+  background: #000;
 }
 
 canvas {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
 }
 
-.ui {
+.hud {
   position: fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 20px;
+  width: 100%;
   text-align: center;
-  color: #fff;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  color: white;
+  text-shadow: 0 2px 6px rgba(0,0,0,.6);
 }
 
-.ui h1 {
-  font-size: 3rem;
+.hud h1 {
   margin: 0;
+  font-size: 2.8rem;
 }
 
-.ui p {
-  font-size: 1.1rem;
-  margin: 8px 0 16px;
+.controls {
+  margin-top: 10px;
 }
 
 button {
-  background: linear-gradient(45deg, #ffd166, #fcbf49);
-  border: none;
-  padding: 12px 28px;
+  padding: 12px 26px;
   font-size: 1rem;
   border-radius: 30px;
+  border: none;
   cursor: pointer;
+  background: linear-gradient(45deg, gold, orange);
   font-weight: bold;
 }
 
-button:hover {
-  transform: scale(1.05);
+#credits {
+  margin-left: 16px;
+  font-size: 1.1rem;
+}
+
+#bonusModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.bonusBox {
+  background: #222;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  color: gold;
+}
+
+.hidden {
+  display: none;
 }
