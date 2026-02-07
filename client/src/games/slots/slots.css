@@ -1,0 +1,33 @@
+.slots-container {
+  text-align: center;
+}
+
+.reels {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+
+.reel {
+  width: 80px;
+  height: 80px;
+  margin: 10px;
+  background: #111;
+  color: gold;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.reels.win .reel {
+  border: 3px solid gold;
+  box-shadow: 0 0 15px gold;
+}
+
+.win-line {
+  color: gold;
+  font-weight: bold;
+  margin: 10px;
+}
