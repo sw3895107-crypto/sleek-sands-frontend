@@ -13,26 +13,39 @@ const spinBtn = document.getElementById("spinBtn");
 const slotResult = document.getElementById("slotResult");
 
 spinBtn.addEventListener("click", async () => {
-  const res = await fetch(`${API_BASE}/api/slots/spin`, {
-    method: "POST"
+  document.getElementById("spin").play();
+
+  // Spin animation
+  reelEls.forEach(el => {
+    el.style.transform = "rotateX(360deg)";
   });
+
+  const res = await fetch(`${API_BASE}/api/slots/spin`, { method: "POST" });
   const data = await res.json();
 
-  reelEls[0].textContent = data.reels[0];
-  reelEls[1].textContent = data.reels[1];
-  reelEls[2].textContent = data.reels[2];
+  setTimeout(() => {
+    reelEls[0].textContent = data.reels[0];
+    reelEls[1].textContent = data.reels[1];
+    reelEls[2].textContent = data.reels[2];
+    reelEls.forEach(el => el.style.transform = "rotateX(0deg)");
 
-  slotResult.textContent = data.win ? `You won ${data.payout}!` : "Try again!";
-
-  document.getElementById(data.sound).play();
+    slotResult.textContent = data.win ? `You won ${data.payout}!` : "Try again!";
+    document.getElementById(data.sound).play();
+  }, 500);
 });
 
 // ----------------- FISHING -----------------
 const canvas = document.getElementById("fishingCanvas");
 const ctx = canvas.getContext("2d");
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+
 let playerScore = 0;
 let fishList = [];
 let players = {};
+
+const fishImg = new Image();
+fishImg.src = "images/fish.png"; // Add your fish image in /images/
 
 const socket = io(API_BASE);
 
@@ -43,7 +56,6 @@ socket.on("fish:update", data => { fishList = data; drawFish(); });
 socket.on("players:update", data => { players = data; updatePlayers(); });
 socket.on("sound:event", sound => { document.getElementById(sound).play(); });
 
-// Shoot fish
 canvas.addEventListener("click", e => {
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -51,18 +63,13 @@ canvas.addEventListener("click", e => {
   socket.emit("shoot", { x, y });
 });
 
-// Draw fish
 function drawFish() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   fishList.forEach(f => {
-    ctx.fillStyle = "orange";
-    ctx.beginPath();
-    ctx.arc(f.x, f.y, 20, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.drawImage(fishImg, f.x - 20, f.y - 20, 40, 40);
   });
 }
 
-// Update players
 function updatePlayers() {
   playerScore = players[socket.id]?.score || 0;
   document.getElementById("score").textContent = playerScore;
@@ -76,7 +83,7 @@ function updatePlayers() {
   });
 }
 
-// Animate fish (simple movement)
+// Animate fish movement
 setInterval(() => {
   fishList.forEach(f => {
     if(f.direction === "right") f.x += f.speed;
@@ -84,9 +91,17 @@ setInterval(() => {
     if(f.direction === "up") f.y -= f.speed;
     if(f.direction === "down") f.y += f.speed;
 
-    // Keep inside canvas
-    f.x = Math.max(0, Math.min(canvas.width, f.x));
-    f.y = Math.max(0, Math.min(canvas.height, f.y));
+    // Bounce off edges
+    if(f.x < 0) f.direction = "right";
+    if(f.x > canvas.width) f.direction = "left";
+    if(f.y < 0) f.direction = "down";
+    if(f.y > canvas.height) f.direction = "up";
   });
   drawFish();
 }, 50);
+
+// Responsive canvas resize
+window.addEventListener("resize", () => {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+});
