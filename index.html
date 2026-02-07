@@ -1,34 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Casino Frontend</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sleek Sands</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🎰 Slots & 🎣 Fishing</h1>
+  <canvas id="scene"></canvas>
 
-  <!-- Slots Section -->
-  <section id="slots">
-    <h2>Slots</h2>
-    <div class="reels">
-      <div class="reel" id="reel1"><img alt="reel1"></div>
-      <div class="reel" id="reel2"><img alt="reel2"></div>
-      <div class="reel" id="reel3"><img alt="reel3"></div>
-    </div>
-    <button id="spinBtn">Spin</button>
-    <p id="slotResult"></p>
-  </section>
+  <div class="ui">
+    <h1>Sleek Sands</h1>
+    <p>Where animals play, relax, and win 🌴</p>
+    <button id="enterBtn">Enter Casino</button>
+  </div>
 
-  <!-- Fishing Section -->
-  <section id="fishing">
-    <h2>Multiplayer Fishing</h2>
-    <canvas id="fishingCanvas"></canvas>
-    <p>Click or tap to shoot fish! Your Score: <span id="score">0</span></p>
-    <ul id="playersList"></ul>
-  </section>
-
-  <script type="module" src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
