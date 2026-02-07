@@ -1,0 +1,16 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #111;
+  color: white;
+  padding: 20px;
+}
+
+input, button {
+  margin: 6px;
+  padding: 8px;
+}
+
+pre {
+  background: #222;
+  padding: 10px;
+}
