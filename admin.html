@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sleek Sands Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <h1>Sleek Sands Admin</h1>
+
+  <input id="token" placeholder="Admin Token">
+  <button onclick="loadStats()">Login</button>
+
+  <pre id="stats"></pre>
+
+  <h3>Slot Payout Control</h3>
+  <input id="symbol" placeholder="Symbol">
+  <input id="payout" placeholder="Payout">
+  <button onclick="setPayout()">Update</button>
+
+  <h3>Global Bonus</h3>
+  <button onclick="toggleBonus()">Toggle Bonus Event</button>
+
+  <script src="admin.js"></script>
+</body>
+</html>
