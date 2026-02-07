@@ -1,0 +1,39 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #1a1a1a;
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  color: #f0c040;
+}
+
+section {
+  margin: 30px auto;
+  padding: 20px;
+  border: 2px solid #444;
+  border-radius: 10px;
+  max-width: 850px;
+  background: #222;
+}
+
+.reels {
+  font-size: 2em;
+  margin: 20px 0;
+}
+
+#fishingCanvas {
+  border: 2px solid #fff;
+  background: #0a3d62;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
