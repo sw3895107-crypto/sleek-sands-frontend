@@ -1,159 +1,104 @@
-import io from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
+const canvas = document.getElementById("scene");
+const ctx = canvas.getContext("2d");
 
-const API_BASE = "https://your-backend.onrender.com";
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
 
-// ----------------- BASE64 ASSETS -----------------
-const symbolData = {
-  "7": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB...",
-  "BAR": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB...",
-  "CHERRY": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB...",
-  "BELL": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB...",
-  "fish": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB..."
-};
+// ------------------ BEACH ELEMENTS ------------------
+let waveOffset = 0;
 
-const soundData = {
-  "slot_win": "data:audio/mp3;base64,//uQxAAAAAAD//Z...",
-  "spin": "data:audio/mp3;base64,//uQxAAAAAAD//Z...",
-  "fish_hit": "data:audio/mp3;base64,//uQxAAAAAAD//Z..."
-};
-
-// ----------------- AUDIO ELEMENTS -----------------
-const audios = {};
-for (let key in soundData) {
-  const audio = new Audio(soundData[key]);
-  audios[key] = audio;
+function drawSky() {
+  const g = ctx.createLinearGradient(0, 0, 0, canvas.height * 0.5);
+  g.addColorStop(0, "#87ceeb");
+  g.addColorStop(1, "#cceeff");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-// ----------------- SLOTS -----------------
-const reelEls = [
-  document.getElementById("reel1").querySelector("img"),
-  document.getElementById("reel2").querySelector("img"),
-  document.getElementById("reel3").querySelector("img")
-];
+function drawOcean() {
+  const oceanTop = canvas.height * 0.45;
+  ctx.fillStyle = "#1e81b0";
+  ctx.fillRect(0, oceanTop, canvas.width, canvas.height);
 
-const spinBtn = document.getElementById("spinBtn");
-const slotResult = document.getElementById("slotResult");
+  ctx.strokeStyle = "rgba(255,255,255,0.4)";
+  ctx.beginPath();
+  for (let x = 0; x < canvas.width; x += 10) {
+    const y = oceanTop + Math.sin((x + waveOffset) * 0.02) * 6;
+    ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+}
 
-const symbols = [
-  { name: "7", img: symbolData["7"] },
-  { name: "BAR", img: symbolData["BAR"] },
-  { name: "CHERRY", img: symbolData["CHERRY"] },
-  { name: "BELL", img: symbolData["BELL"] }
-];
+function drawSand() {
+  const sandTop = canvas.height * 0.6;
+  ctx.fillStyle = "#f2d16b";
+  ctx.fillRect(0, sandTop, canvas.width, canvas.height);
 
-spinBtn.addEventListener("click", async () => {
-  audios["spin"].play();
+  for (let i = 0; i < 200; i++) {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(
+      Math.random() * canvas.width,
+      sandTop + Math.random() * (canvas.height - sandTop),
+      2,
+      2
+    );
+  }
+}
 
-  const res = await fetch(`${API_BASE}/api/slots/spin`, { method: "POST" });
-  const data = await res.json();
-
-  const durations = [1500, 2000, 2500];
-  const startTime = performance.now();
-
-  function spinAnimation(currentTime) {
-    const elapsed = currentTime - startTime;
-
-    reelEls.forEach((el, i) => {
-      const duration = durations[i];
-      if (elapsed < duration) {
-        const t = elapsed / duration;
-        const ease = Math.cos((1 - t) * Math.PI / 2);
-        const index = Math.floor(ease * symbols.length * 10) % symbols.length;
-        el.src = symbols[index].img;
-        el.style.transform = `translateY(${Math.sin(t * Math.PI * 10) * 10}px)`;
-      } else {
-        const finalSymbol = symbols.find(s => s.name === data.reels[i]);
-        el.src = finalSymbol.img;
-        el.style.transform = "translateY(0px)";
-      }
-    });
-
-    if (elapsed < Math.max(...durations)) {
-      requestAnimationFrame(spinAnimation);
-    } else {
-      slotResult.textContent = data.win ? `You won ${data.payout}!` : "Try again!";
-      audios[data.sound].play();
-
-      // Glow animation
-      reelEls.forEach(el => el.parentElement.classList.remove("win"));
-      if (data.win) {
-        reelEls.forEach(el => {
-          if (data.reels.every(r => r === data.reels[0])) el.parentElement.classList.add("win");
-        });
-        setTimeout(() => reelEls.forEach(el => el.parentElement.classList.remove("win")), 2000);
-      }
-    }
+// ------------------ ANIMAL CHARACTERS ------------------
+class Animal {
+  constructor(emoji, x, y) {
+    this.emoji = emoji;
+    this.x = x;
+    this.y = y;
+    this.vx = (Math.random() - 0.5) * 0.6;
+    this.step = Math.random() * Math.PI * 2;
   }
 
-  requestAnimationFrame(spinAnimation);
-});
+  update() {
+    this.step += 0.05;
+    this.x += this.vx;
+    if (this.x < 20 || this.x > canvas.width - 20) this.vx *= -1;
+  }
 
-// ----------------- FISHING -----------------
-const canvas = document.getElementById("fishingCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+  draw() {
+    ctx.font = "32px serif";
+    ctx.fillText(this.emoji, this.x, this.y + Math.sin(this.step) * 3);
+  }
+}
 
-let playerScore = 0;
-let fishList = [];
-let players = [];
-let particles = [];
-let deathAnimations = [];
+const animals = [
+  new Animal("🦊", 200, canvas.height * 0.72),
+  new Animal("🐶", 350, canvas.height * 0.75),
+  new Animal("🐱", 520, canvas.height * 0.7),
+  new Animal("🐧", 700, canvas.height * 0.74),
+  new Animal("🦀", 900, canvas.height * 0.78)
+];
 
-const fishImg = new Image();
-fishImg.src = symbolData["fish"];
+// ------------------ ANIMATION LOOP ------------------
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-const socket = io(API_BASE);
-socket.on("connect", () => console.log("Connected:", socket.id));
-socket.on("fish:init", data => fishList = data);
-socket.on("fish:update", data => fishList = data);
-socket.on("players:update", data => { players = data; updatePlayers(); });
-socket.on("sound:event", sound => audios[sound].play());
+  drawSky();
+  drawOcean();
+  drawSand();
 
-function handleShoot(x, y) {
-  socket.emit("shoot", { x, y });
-  particles.push({ x, y, life: 20 + Math.random() * 10 });
-
-  fishList.forEach(f => {
-    if (Math.abs(f.x - x) < 40 && Math.abs(f.y - y) < 40) {
-      for (let i = 0; i < 10; i++) {
-        deathAnimations.push({ x: f.x, y: f.y, vx: (Math.random()-0.5)*4, vy: (Math.random()-0.5)*4, life: 30 });
-      }
-    }
+  animals.forEach(a => {
+    a.update();
+    a.draw();
   });
+
+  waveOffset += 1.5;
+  requestAnimationFrame(animate);
 }
 
-canvas.addEventListener("click", e => handleShoot(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top));
-canvas.addEventListener("touchstart", e => { e.preventDefault(); const t = e.touches[0]; handleShoot(t.clientX - canvas.getBoundingClientRect().left, t.clientY - canvas.getBoundingClientRect().top); });
+animate();
 
-function drawFish() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  fishList.forEach(f=>ctx.drawImage(fishImg, f.x-20,f.y-20,40,40));
-  particles.forEach((p,i)=>{ ctx.fillStyle=`rgba(255,255,255,${p.life/30})`; ctx.beginPath(); ctx.arc(p.x+(Math.random()-0.5)*20,p.y+(Math.random()-0.5)*20,3,0,Math.PI*2); ctx.fill(); p.life--; });
-  particles = particles.filter(p=>p.life>0);
-  deathAnimations.forEach((p,i)=>{ ctx.fillStyle=`rgba(255,100,0,${p.life/30})`; ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fill(); p.x+=p.vx; p.y+=p.vy; p.vy+=0.1; p.life--; });
-  deathAnimations = deathAnimations.filter(p=>p.life>0);
-}
-
-function updatePlayers(){
-  playerScore = players[socket.id]?.score || 0;
-  document.getElementById("score").textContent = playerScore;
-  const listEl = document.getElementById("playersList"); listEl.innerHTML = "";
-  Object.values(players).forEach(p=>{ const li = document.createElement("li"); li.textContent=`${p.id} – ${p.score}`; listEl.appendChild(li); });
-}
-
-setInterval(()=>{
-  fishList.forEach(f=>{
-    if(f.direction==="right") f.x+=f.speed;
-    if(f.direction==="left") f.x-=f.speed;
-    if(f.direction==="up") f.y-=f.speed;
-    if(f.direction==="down") f.y+=f.speed;
-    if(f.x<0) f.direction="right";
-    if(f.x>canvas.width) f.direction="left";
-    if(f.y<0) f.direction="down";
-    if(f.y>canvas.height) f.direction="up";
-  });
-  drawFish();
-},50);
-
-window.addEventListener("resize",()=>{ canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight; });
+// ------------------ UI ------------------
+document.getElementById("enterBtn").onclick = () => {
+  alert("Welcome to Sleek Sands Casino 🌴🎰");
+};
