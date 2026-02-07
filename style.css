@@ -39,7 +39,7 @@ section {
   border: 2px solid #fff;
   border-radius: 10px;
   background: #333;
-  transition: transform 0.3s;
+  overflow: hidden;
 }
 
 #fishingCanvas {
@@ -50,6 +50,7 @@ section {
   width: 100%;
   max-width: 800px;
   height: 60vh;
+  touch-action: none; /* Mobile touch support */
 }
 
 button {
